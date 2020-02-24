@@ -7,6 +7,9 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
+        # Need to add 256 bytes of RAM
+        # 8 registers
+        # add properties for registers with program counter
         pass
 
     def load(self):
@@ -62,4 +65,7 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+        # Main function 
+        # Need to read memory address from register
+        # Update ram_read(), ram_write()
         pass
