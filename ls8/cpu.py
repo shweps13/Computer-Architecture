@@ -1,5 +1,5 @@
-"""CPU functionality."""
 
+"""CPU functionality."""
 import sys
 
 class CPU:
@@ -25,9 +25,33 @@ class CPU:
         """Accept a value to write, and the address to write it to"""
         # MDR: Memory Data Register, holds the value to write or the value just read
         self.ram[mar] = mdr
-
-    def load(self):
+    
+    def load_default(self):
         """Load a program into memory."""
+        print("\n==> [ Default loading ]")
+
+        address = 0
+
+        # For now, we've just hardcoded a program:
+
+        program = [
+            # From print8.ls8
+            0b10000010, # LDI R0,8
+            0b00000000,
+            0b00001000,
+            0b01000111, # PRN R0
+            0b00000000,
+            0b00000001, # HLT
+        ]
+
+        for instruction in program:
+            self.ram[address] = instruction
+            address += 1
+
+
+    def load(self, file_path):
+        """Load a program into memory."""
+        print("\n==> Argument: [", file_path, "]")
 
         address = 0
 
@@ -107,13 +131,13 @@ class CPU:
                 print("LDI statement", LDI )
                 print('operands a', operand_a, self.ram[operand_a])
                 print('operands b', operand_b, self.ram[operand_b])
-                self.reg[operand_a] = operand_b
+                self.reg[operand_a] += operand_b
                 self.pc += 3
 
             # Print value that is stored in the given register
             elif ir == PRN: 
                 reg = self.ram_read(self.pc + 1)
-                self.reg[reg]
+                # self.reg[reg]
                 print(f"PRN print {self.reg[reg]}") 
                 self.pc += 2
 
