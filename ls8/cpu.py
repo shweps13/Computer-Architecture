@@ -12,7 +12,7 @@ class CPU:
         # 8 registers
         self.reg = [0] * 8
         # add properties for registers with PC (program counter)
-        # PC and FL registers are cleared to 0
+        # PC (Program Counter) and FL (Flags) registers are cleared to 0
         self.pc = 0
         self.fl = 0
 
@@ -81,5 +81,19 @@ class CPU:
         """Run the CPU."""
         # Main function 
         # Need to read memory address from register
-        # Update ram_read(), ram_write()
+
+        # It needs to read the memory address that's stored in register PC, 
+        # and store that result in IR, the Instruction Register.
+
+        # IR: Instruction Register, contains a copy of the currently executing instruction
+        ir = self.pc
+
+        # Read the bytes at PC+1 and PC+2 from RAM
+        operand_a = self.ram_read(ir + 1)
+        operand_b = self.ram_read(ir + 2)
+        work = True
+
+        # while - if - else cascade here
+        # HLT, LDI, PRN
+
         pass
