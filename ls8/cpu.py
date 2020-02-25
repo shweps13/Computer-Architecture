@@ -7,7 +7,24 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        pass
+        # Need to add 256 bytes of RAM
+        self.ram = [0] * 255
+        # 8 registers
+        self.reg = [0] * 8
+        # add properties for registers with PC (program counter)
+        # PC (Program Counter) and FL (Flags) registers are cleared to 0
+        self.pc = 0
+        self.fl = 0
+
+    def ram_read(self, mar):
+        """Accept the address to read and return the value stored there"""
+        # MAR: Memory Address Register, holds the memory address we're reading or writing
+        return self.ram[mar]
+    
+    def ram_write(self, mar, mdr):
+        """Accept a value to write, and the address to write it to"""
+        # MDR: Memory Data Register, holds the value to write or the value just read
+        self.ram[mar] = mdr
 
     def load(self):
         """Load a program into memory."""
@@ -62,4 +79,51 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+
+        LDI = 0b10000010
+        PRN = 0b01000111
+        HLT = 0b00000001
+
+        # Main function 
+        # Need to read memory address from register
+
+        # It needs to read the memory address that's stored in register PC, 
+        # and store that result in IR, the Instruction Register.
+
+        # IR: Instruction Register, contains a copy of the currently executing instruction
+
+        # Read the bytes at PC+1 and PC+2 from RAM
+        operand_a = self.ram_read(self.pc + 1)
+        operand_b = self.ram_read(self.pc + 2)
+        work = True
+
+        # while - if - else cascade here
+        # HLT, LDI, PRN
+        print("--=== Start ===--")
+        while work is True:
+            ir = self.ram_read(self.pc)
+            # Set the value of a register to an integer.
+            if ir == LDI:
+                print("LDI statement", LDI )
+                print('operands a', operand_a, self.ram[operand_a])
+                print('operands b', operand_b, self.ram[operand_b])
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+
+            # Print value that is stored in the given register
+            elif ir == PRN: 
+                reg = self.ram_read(self.pc + 1)
+                self.reg[reg]
+                print(f"PRN print {self.reg[reg]}") 
+                self.pc += 2
+
+            # halt operations
+            elif ir == HLT:
+                print("Halt")
+                print("--===  End  ===--")
+                work = False
+                sys.exit(0)
+            
+            else:
+                print(f"Unknown command {ir}")
+                sys.exit(1)
