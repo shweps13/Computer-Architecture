@@ -16,6 +16,16 @@ class CPU:
         self.pc = 0
         self.fl = 0
 
+    def ram_read(self, mar):
+        """Accept the address to read and return the value stored there"""
+        # MAR: Memory Address Register, holds the memory address we're reading or writing
+        return self.ram[mar]
+    
+    def ram_write(self, mar, mdr):
+        """Accept a value to write, and the address to write it to"""
+        # MDR: Memory Data Register, holds the value to write or the value just read
+        self.ram[mar] = mdr
+
     def load(self):
         """Load a program into memory."""
 
