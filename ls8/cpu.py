@@ -8,9 +8,13 @@ class CPU:
     def __init__(self):
         """Construct a new CPU."""
         # Need to add 256 bytes of RAM
+        self.ram = [0] * 255
         # 8 registers
-        # add properties for registers with program counter
-        pass
+        self.reg = [0] * 8
+        # add properties for registers with PC (program counter)
+        # PC and FL registers are cleared to 0
+        self.pc = 0
+        self.fl = 0
 
     def load(self):
         """Load a program into memory."""
