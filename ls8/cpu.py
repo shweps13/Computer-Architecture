@@ -62,7 +62,16 @@ class CPU:
                 comment = line.split('#')
                 num = comment[0].strip()
                 # print(comment)
-                print(num)
+                # print(num)
+
+                # convert binary to string
+                data = int(num, 2) 
+                # print(data)
+                
+                # save to RAM
+                print(f'saving {data} to {address}')
+                self.ram_write(address, data)
+                address += 1
 
 
     def alu(self, op, reg_a, reg_b):
