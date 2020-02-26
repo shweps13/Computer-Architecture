@@ -52,27 +52,28 @@ class CPU:
     def load(self, file_path):
         """Load a program into memory."""
         print("\n==> Argument: [", file_path, "]")
+        try:
+            address = 0
 
-        address = 0
+            # open file to extract data
+            with open(file_path) as f:
+                #check each line
+                for line in f:
+                    comment = line.split('#')
+                    num = comment[0].strip()
+                    # print(comment)
+                    # print(num)
 
-        # open file to extract data
-        with open(file_path) as f:
-            #check each line
-            for line in f:
-                comment = line.split('#')
-                num = comment[0].strip()
-                # print(comment)
-                # print(num)
-
-                # convert binary to string
-                data = int(num, 2) 
-                # print(data)
-                
-                # save to RAM
-                print(f'saving {data} to {address}')
-                self.ram_write(address, data)
-                address += 1
-
+                    # convert binary to string
+                    data = int(num, 2) 
+                    # print(data)
+                    
+                    # save to RAM
+                    print(f'saving {data} to {address}')
+                    self.ram_write(address, data)
+                    address += 1
+        except FileNotFoundError:
+            print(f"{file_path} not found")
 
     def alu(self, op, reg_a, reg_b):
         """ALU operations."""
@@ -80,6 +81,12 @@ class CPU:
         if op == "ADD":
             self.reg[reg_a] += self.reg[reg_b]
         #elif op == "SUB": etc
+        # multiply
+        elif op == "MUL":
+            print(self.reg)
+            print("reg_a", reg_a)
+            print("reg_b", reg_b)
+            self.reg[reg_a] *= self.reg[reg_b]
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -109,6 +116,7 @@ class CPU:
         LDI = 0b10000010
         PRN = 0b01000111
         HLT = 0b00000001
+        MUL = 0b10100010
 
         # Main function 
         # Need to read memory address from register
@@ -119,8 +127,7 @@ class CPU:
         # IR: Instruction Register, contains a copy of the currently executing instruction
 
         # Read the bytes at PC+1 and PC+2 from RAM
-        operand_a = self.ram_read(self.pc + 1)
-        operand_b = self.ram_read(self.pc + 2)
+
         work = True
 
         # while - if - else cascade here
@@ -129,17 +136,26 @@ class CPU:
         while work is True:
             ir = self.ram_read(self.pc)
             # Set the value of a register to an integer.
+
+            operand_a = self.ram_read(self.pc + 1)
+            operand_b = self.ram_read(self.pc + 2)
+
             if ir == LDI:
                 print("LDI statement", LDI )
                 print('operands a', operand_a, self.ram[operand_a])
                 print('operands b', operand_b, self.ram[operand_b])
-                self.reg[operand_a] += operand_b
+                self.reg[operand_a] = operand_b
+                self.pc += 3
+            
+            # Multiply the values
+            elif ir == MUL: 
+                self.alu("MUL", operand_a, operand_b)
                 self.pc += 3
 
             # Print value that is stored in the given register
             elif ir == PRN: 
-                reg = self.ram_read(self.pc + 1)
-                # self.reg[reg]
+                reg = operand_a
+                self.reg[reg]
                 print(f"PRN print {self.reg[reg]}") 
                 self.pc += 2
 
@@ -148,6 +164,7 @@ class CPU:
                 print("Halt")
                 print("--===  End  ===--")
                 work = False
+                self.pc +=1
                 sys.exit(0)
             
             else:
