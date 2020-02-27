@@ -8,13 +8,15 @@ class CPU:
     def __init__(self):
         """Construct a new CPU."""
         # Need to add 256 bytes of RAM
-        self.ram = [0] * 255
+        self.ram = [0] * 256
         # 8 registers
         self.reg = [0] * 8
         # add properties for registers with PC (program counter)
         # PC (Program Counter) and FL (Flags) registers are cleared to 0
         self.pc = 0
         self.fl = 0
+        # Stack Pointer
+        self.sp = len(self.reg) - 1
 
     def ram_read(self, mar):
         """Accept the address to read and return the value stored there"""
@@ -113,10 +115,12 @@ class CPU:
     def run(self):
         """Run the CPU."""
 
-        LDI = 0b10000010
-        PRN = 0b01000111
-        HLT = 0b00000001
-        MUL = 0b10100010
+        LDI  = 0b10000010
+        PRN  = 0b01000111
+        HLT  = 0b00000001
+        MUL  = 0b10100010
+        PUSH = 0b01000101
+        POP  = 0b01000110
 
         # Main function 
         # Need to read memory address from register
