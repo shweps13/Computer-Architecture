@@ -171,6 +171,12 @@ class CPU:
                 self.pc +=1
                 sys.exit(0)
             
+            elif ir == PUSH:
+                pass
+            
+            elif ir == POP:
+                pass
+            
             else:
                 print(f"Unknown command {ir}")
                 sys.exit(1)
