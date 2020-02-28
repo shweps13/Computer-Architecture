@@ -14,7 +14,7 @@ class CPU:
         # add properties for registers with PC (program counter)
         # PC (Program Counter) and FL (Flags) registers are cleared to 0
         self.pc = 0
-        self.fl = 0
+        self.fl = 0b00000000
         # Stack Pointer
         self.sp = len(self.reg) - 1
 
@@ -92,10 +92,16 @@ class CPU:
             print("reg_b", reg_b)
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == "CMP":
+            # last 3 digits in self.fl => [00000LGE] are showing us [E]qual, [Larger] or [G]reater  mark
             # if reg_a = reg_b => set [E] flag to 1, otherwise 0
+            if self.reg[reg_a] == self.reg[reg_b]:
+                self.fl = 0b00000001
             # if reg_a < reg_b => set [L] flag to 1, otherwise 0
+            if self.reg[reg_a] < self.reg[reg_b]:
+                self.fl = 0b00000100
             # if reg_a > reg_b => set [G] flag to 1, otherwise 0
-            pass
+            if self.reg[reg_a] > self.reg[reg_b]:
+                self.fl = 0b00000010
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -239,6 +245,9 @@ class CPU:
             
             elif ir == CMP:
                 self.alu("CMP", operand_a, operand_b)
+                print("Compare...")
+                print("Register: ", self.reg)
+                print("Flag: ", self.reg[self.fl])
                 self.pc += 3
 
             elif ir == JMP:
