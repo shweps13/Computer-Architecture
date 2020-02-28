@@ -121,6 +121,8 @@ class CPU:
         MUL  = 0b10100010
         PUSH = 0b01000101
         POP  = 0b01000110
+        CALL = 0b01010000
+        RET  = 0b00010001
 
         # Main function 
         # Need to read memory address from register
@@ -204,6 +206,12 @@ class CPU:
 
                 # increment Program Counter
                 self.pc += 2
+            
+            elif ir == CALL:
+                pass
+
+            elif ir == RET:
+                pass
             
             else:
                 print(f"Unknown command {ir}")
