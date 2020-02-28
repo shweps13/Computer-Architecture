@@ -258,18 +258,15 @@ class CPU:
 
             elif ir == JMP:
                 # Jump to the address stored in the given register.
-                jump_address = operand_a
-                
                 # Set the PC to the address stored in the given register.
-                self.pc = self.reg[jump_address]
+                self.pc = self.reg[operand_a]
                 print("Jump address: ", self.pc)
                 # print("Program Counter ", self.pc)
 
             elif ir == JEQ:
                 # If equal flag is set (true), jump to the address stored in the given register.
-                if self.fl[6] == 1:
-                    jump_address = operand_a
-                    self.pc = self.reg[jump_address]
+                if self.fl[7] == 1:
+                    self.pc = self.reg[operand_a]
                     print("Jump to: ", self.pc)
                 else:
                     print("JEQ command, but skipped")
@@ -277,9 +274,8 @@ class CPU:
 
             elif ir == JNE:
                 # If E flag is clear (false, 0), jump to the address stored in the given register.
-                if self.fl[6] == 0:
-                    jump_address = operand_a
-                    self.pc = self.reg[jump_address]
+                if self.fl[7] == 0:
+                    self.pc = self.reg[operand_a]
                     print("Jump to: ", self.pc)
                 else:
                     print("JNE command, but skipped")
