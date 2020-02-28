@@ -91,6 +91,11 @@ class CPU:
             print("reg_a", reg_a)
             print("reg_b", reg_b)
             self.reg[reg_a] *= self.reg[reg_b]
+        elif op == "CMP":
+            # if reg_a = reg_b => set [E] flag to 1, otherwise 0
+            # if reg_a < reg_b => set [L] flag to 1, otherwise 0
+            # if reg_a > reg_b => set [G] flag to 1, otherwise 0
+            pass
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -127,8 +132,9 @@ class CPU:
         CALL = 0b01010000
         RET  = 0b00010001
         CMP  = 0b10100111
-        JEQ  = 0b01010101
         JMP  = 0b01010100
+        JEQ  = 0b01010101
+        JNE  = 0b01010110
 
         # Main function 
         # Need to read memory address from register
@@ -232,14 +238,18 @@ class CPU:
                 self.reg[self.sp] += 1
             
             elif ir == CMP:
+                self.alu("CMP", operand_a, operand_b)
+                self.pc += 3
+
+            elif ir == JMP:
                 pass
 
             elif ir == JEQ:
                 pass
 
-            elif ir == RET:
+            elif ir == JNE:
                 pass
-            
+
             else:
                 print(f"Unknown command {ir}")
                 sys.exit(1)
