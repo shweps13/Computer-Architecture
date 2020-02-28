@@ -64,7 +64,9 @@ class CPU:
                     comment = line.split('#')
                     num = comment[0].strip()
                     # print(comment)
-                    # print(num)
+                    print("Num", num)
+                    if num == '':
+                        continue
 
                     # convert binary to string
                     data = int(num, 2) 
@@ -119,6 +121,7 @@ class CPU:
         PRN  = 0b01000111
         HLT  = 0b00000001
         MUL  = 0b10100010
+        ADD  = 0b10100000
         PUSH = 0b01000101
         POP  = 0b01000110
         CALL = 0b01010000
@@ -136,7 +139,7 @@ class CPU:
         # HLT, LDI, PRN
         print("--=== Start ===--")
         while work is True:
-            self.trace()
+            # self.trace()
             # IR: Instruction Register, contains a copy of the currently executing instruction
             ir = self.ram_read(self.pc)
 
@@ -145,7 +148,7 @@ class CPU:
             operand_b = self.ram_read(self.pc + 2)
 
             if ir == LDI:
-                print("LDI statement", LDI )
+                # print("LDI statement", LDI )
                 print('operands a', operand_a, self.ram[operand_a])
                 print('operands b', operand_b, self.ram[operand_b])
                 self.reg[operand_a] = operand_b
@@ -154,6 +157,10 @@ class CPU:
             # Multiply the values
             elif ir == MUL: 
                 self.alu("MUL", operand_a, operand_b)
+                self.pc += 3
+            
+            elif ir == ADD:
+                self.alu("ADD", operand_a, operand_b)
                 self.pc += 3
 
             # Print value that is stored in the given register
@@ -173,37 +180,28 @@ class CPU:
             
             elif ir == PUSH:
                 # Store the value in the register into RAM at the address stored in SP
-
                 # Grab the register argument
                 reg = operand_a
                 # Grab the values
                 val = self.reg[reg]
                 print("Push", val)                
-
                 # Decrement the SP.
                 self.reg[self.sp] -= 1
-
                 # Copy the value in the given register to the address pointed to by SP.
                 self.ram_write(self.reg[self.sp], val)
-                
                 # increment Program Counter
                 self.pc += 2
-
             
             elif ir == POP:
                 # Retrieve the value from RAM at the address stored in SP, and store that value in the register
-                
                 # Grab the register argument
                 reg = operand_a
-                
                 # Grab the values
                 val = self.ram[self.reg[self.sp]]
                 self.reg[reg] = val
                 print("Pop", val)                
-                
                 # Increment SP
                 self.reg[self.sp] += 1
-
                 # increment Program Counter
                 self.pc += 2
             
