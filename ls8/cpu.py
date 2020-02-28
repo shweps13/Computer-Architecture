@@ -64,7 +64,7 @@ class CPU:
                     comment = line.split('#')
                     num = comment[0].strip()
                     # print(comment)
-                    print("Num", num)
+                    # print("Num", num)
                     if num == '':
                         continue
 
@@ -185,7 +185,7 @@ class CPU:
                 # Grab the values
                 val = self.reg[reg]
                 print("Push", val)                
-                # Decrement the SP.
+                # Decrement the Stack Pointer
                 self.reg[self.sp] -= 1
                 # Copy the value in the given register to the address pointed to by SP.
                 self.ram_write(self.reg[self.sp], val)
@@ -200,16 +200,34 @@ class CPU:
                 val = self.ram[self.reg[self.sp]]
                 self.reg[reg] = val
                 print("Pop", val)                
-                # Increment SP
+                # Increment Stack Pointer
                 self.reg[self.sp] += 1
                 # increment Program Counter
                 self.pc += 2
             
             elif ir == CALL:
-                pass
+                # The address of the instruction directly after CALL is pushed onto the stack.
+                val = self.pc + 2
+                # PC is set to the address stored in the given register
+                reg_index = operand_a 
+                subroutine_address = self.reg[reg_index]
+                # Decrement the Stack Pointer
+                self.reg[self.sp] -= 1
+                # PC is set to the address stored in the given register
+                self.ram[self.reg[self.sp]] = val
+                reg = operand_a
+                subroutine_address = self.reg[reg]
+                print("reg: ", reg)
+                # jump to that location in RAM --> execute the 1st instruction in the subroutine
+                self.pc = subroutine_address
 
             elif ir == RET:
-                pass
+                # return for the subroutine
+                return_address = self.reg[self.sp]
+                # pop value from stack
+                self.pc = self.ram_read(return_address)
+                # Increment Stack Pointer
+                self.reg[self.sp] += 1
             
             else:
                 print(f"Unknown command {ir}")
