@@ -96,12 +96,15 @@ class CPU:
             # if reg_a = reg_b => set [E] flag to 1, otherwise 0
             if self.reg[reg_a] == self.reg[reg_b]:
                 self.fl = 0b00000001
+                print("[Equal]")
             # if reg_a < reg_b => set [L] flag to 1, otherwise 0
             if self.reg[reg_a] < self.reg[reg_b]:
                 self.fl = 0b00000100
+                print("[Lower]")
             # if reg_a > reg_b => set [G] flag to 1, otherwise 0
             if self.reg[reg_a] > self.reg[reg_b]:
                 self.fl = 0b00000010
+                print("[Greater]")
         else:
             raise Exception("Unsupported ALU operation")
 
@@ -244,6 +247,7 @@ class CPU:
                 self.reg[self.sp] += 1
             
             elif ir == CMP:
+                # Compare 2 values
                 self.alu("CMP", operand_a, operand_b)
                 print("Compare...")
                 print("Register: ", self.reg)
@@ -251,7 +255,14 @@ class CPU:
                 self.pc += 3
 
             elif ir == JMP:
-                pass
+                # Jump to the address stored in the given register.
+                jump_address = operand_a
+                print("Jump address: ", jump_address)
+                
+                # Set the PC to the address stored in the given register.
+                self.pc = self.reg[jump_address]
+                print("Program Counter ", self.pc)
+
 
             elif ir == JEQ:
                 pass
