@@ -8,13 +8,15 @@ class CPU:
     def __init__(self):
         """Construct a new CPU."""
         # Need to add 256 bytes of RAM
-        self.ram = [0] * 255
+        self.ram = [0] * 256
         # 8 registers
         self.reg = [0] * 8
         # add properties for registers with PC (program counter)
         # PC (Program Counter) and FL (Flags) registers are cleared to 0
         self.pc = 0
         self.fl = 0
+        # Stack Pointer
+        self.sp = len(self.reg) - 1
 
     def ram_read(self, mar):
         """Accept the address to read and return the value stored there"""
@@ -113,10 +115,12 @@ class CPU:
     def run(self):
         """Run the CPU."""
 
-        LDI = 0b10000010
-        PRN = 0b01000111
-        HLT = 0b00000001
-        MUL = 0b10100010
+        LDI  = 0b10000010
+        PRN  = 0b01000111
+        HLT  = 0b00000001
+        MUL  = 0b10100010
+        PUSH = 0b01000101
+        POP  = 0b01000110
 
         # Main function 
         # Need to read memory address from register
@@ -124,19 +128,17 @@ class CPU:
         # It needs to read the memory address that's stored in register PC, 
         # and store that result in IR, the Instruction Register.
 
-        # IR: Instruction Register, contains a copy of the currently executing instruction
-
-        # Read the bytes at PC+1 and PC+2 from RAM
-
         work = True
 
         # while - if - else cascade here
         # HLT, LDI, PRN
         print("--=== Start ===--")
         while work is True:
+            self.trace()
+            # IR: Instruction Register, contains a copy of the currently executing instruction
             ir = self.ram_read(self.pc)
-            # Set the value of a register to an integer.
 
+            # Read the bytes at PC+1 and PC+2 from RAM
             operand_a = self.ram_read(self.pc + 1)
             operand_b = self.ram_read(self.pc + 2)
 
@@ -166,6 +168,42 @@ class CPU:
                 work = False
                 self.pc +=1
                 sys.exit(0)
+            
+            elif ir == PUSH:
+                # Store the value in the register into RAM at the address stored in SP
+
+                # Grab the register argument
+                reg = operand_a
+                # Grab the values
+                val = self.reg[reg]
+                print("Push", val)                
+
+                # Decrement the SP.
+                self.reg[self.sp] -= 1
+
+                # Copy the value in the given register to the address pointed to by SP.
+                self.ram_write(self.reg[self.sp], val)
+                
+                # increment Program Counter
+                self.pc += 2
+
+            
+            elif ir == POP:
+                # Retrieve the value from RAM at the address stored in SP, and store that value in the register
+                
+                # Grab the register argument
+                reg = operand_a
+                
+                # Grab the values
+                val = self.ram[self.reg[self.sp]]
+                self.reg[reg] = val
+                print("Pop", val)                
+                
+                # Increment SP
+                self.reg[self.sp] += 1
+
+                # increment Program Counter
+                self.pc += 2
             
             else:
                 print(f"Unknown command {ir}")

@@ -14,4 +14,5 @@ if len(sys.argv) == 1:
 elif len(sys.argv) == 2:
     cpu.load(sys.argv[1])
 
+# cpu.trace()
 cpu.run()
