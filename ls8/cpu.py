@@ -261,7 +261,7 @@ class CPU:
                 
                 # Set the PC to the address stored in the given register.
                 self.pc = self.reg[jump_address]
-                print("Program Counter ", self.pc)
+                # print("Program Counter ", self.pc)
 
             elif ir == JEQ:
                 # If equal flag is set (true), jump to the address stored in the given register.
@@ -274,7 +274,14 @@ class CPU:
                     self.pc += 2
 
             elif ir == JNE:
-                pass
+                # If E flag is clear (false, 0), jump to the address stored in the given register.
+                if self.fl == 0b00000000:
+                    jump_address = operand_a
+                    print("Jump to: ", jump_address)
+                    self.pc = self.reg[jump_address]
+                else:
+                    print("JNE command, but skipped")
+                    self.pc += 2
 
             else:
                 print(f"Unknown command {ir}")
