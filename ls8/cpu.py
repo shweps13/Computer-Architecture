@@ -14,7 +14,7 @@ class CPU:
         # add properties for registers with PC (program counter)
         # PC (Program Counter) and FL (Flags) registers are cleared to 0
         self.pc = 0
-        self.fl = 0b00000000
+        self.fl = [0] * 8
         # Stack Pointer
         self.sp = len(self.reg) - 1
 
@@ -92,18 +92,18 @@ class CPU:
             print("reg_b", reg_b)
             self.reg[reg_a] *= self.reg[reg_b]
         elif op == "CMP":
-            # last 3 digits in self.fl => [00000LGE] are showing us [E]qual, [Larger] or [G]reater  mark
+            # last 3 digits in self.fl => [00000LGE] are showing us [E]qual, [L]ower or [G]reater  mark
             # if reg_a = reg_b => set [E] flag to 1, otherwise 0
             if self.reg[reg_a] == self.reg[reg_b]:
-                self.fl = 0b00000001
+                self.fl[7] = 1
                 print("[  Equal  ]")
             # if reg_a < reg_b => set [L] flag to 1, otherwise 0
             if self.reg[reg_a] < self.reg[reg_b]:
-                self.fl = 0b00000100
+                self.fl[5] = 1
                 print("[  Lower  ]")
             # if reg_a > reg_b => set [G] flag to 1, otherwise 0
             if self.reg[reg_a] > self.reg[reg_b]:
-                self.fl = 0b00000010
+                self.fl[6] = 6
                 print("[  Greater  ]")
         else:
             raise Exception("Unsupported ALU operation")
@@ -267,7 +267,7 @@ class CPU:
 
             elif ir == JEQ:
                 # If equal flag is set (true), jump to the address stored in the given register.
-                if self.fl == 0b00000001:
+                if self.fl[6] == 1:
                     jump_address = operand_a
                     self.pc = self.reg[jump_address]
                     print("Jump to: ", self.pc)
@@ -277,7 +277,7 @@ class CPU:
 
             elif ir == JNE:
                 # If E flag is clear (false, 0), jump to the address stored in the given register.
-                if self.fl == 0b00000000:
+                if self.fl[6] == 0:
                     jump_address = operand_a
                     self.pc = self.reg[jump_address]
                     print("Jump to: ", self.pc)
