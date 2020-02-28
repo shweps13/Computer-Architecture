@@ -126,6 +126,9 @@ class CPU:
         POP  = 0b01000110
         CALL = 0b01010000
         RET  = 0b00010001
+        CMP  = 0b10100111
+        JEQ  = 0b01010101
+        JMP  = 0b01010100
 
         # Main function 
         # Need to read memory address from register
@@ -218,7 +221,6 @@ class CPU:
                 reg = operand_a
                 subroutine_address = self.reg[reg]
                 print("reg: ", reg)
-                # jump to that location in RAM --> execute the 1st instruction in the subroutine
                 self.pc = subroutine_address
 
             elif ir == RET:
@@ -228,6 +230,15 @@ class CPU:
                 self.pc = self.ram_read(return_address)
                 # Increment Stack Pointer
                 self.reg[self.sp] += 1
+            
+            elif ir == CMP:
+                pass
+
+            elif ir == JEQ:
+                pass
+
+            elif ir == RET:
+                pass
             
             else:
                 print(f"Unknown command {ir}")
